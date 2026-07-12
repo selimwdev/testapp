@@ -30,4 +30,4 @@ class GenerateController extends Controller
 }
 }
 
-##secret123
+##
