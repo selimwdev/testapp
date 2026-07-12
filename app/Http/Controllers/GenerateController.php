@@ -29,3 +29,5 @@ class GenerateController extends Controller
     return view('generate', compact('codes'));
 }
 }
+
+##hello
