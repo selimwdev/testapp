@@ -1,25 +1,35 @@
-name: Check Branch Name
+name: Validate Merge Flow
 
 on:
-  push:
-    branches-ignore:
-      - 'main'
-      - 'master'
   pull_request:
     types: [opened, synchronize, reopened]
 
 jobs:
-  validate-branch-name:
+  validate-flow:
     runs-on: ubuntu-latest
     steps:
-      - name: Validate branch name
+      - name: Enforce Branch Rules
         run: |
-          BRANCH_NAME="${{ github.head_ref || github.ref_name }}"
-          echo "Current branch: $BRANCH_NAME"
+          SOURCE_BRANCH="${{ github.head_ref }}"
+          TARGET_BRANCH="${{ github.base_ref }}"
           
-          if [[ $BRANCH_NAME == feature/* ]]; then
-            echo "Branch name is valid."
-          else
-            echo "Error: Branch name must start with 'feature/'"
-            exit 1
+          echo "Source: $SOURCE_BRANCH"
+          echo "Target: $TARGET_BRANCH"
+          
+          # 1. القاعدة الخاصة بالـ main (يستقبل فقط feature/*)
+          if [[ "$TARGET_BRANCH" == "main" ]]; then
+            if [[ "$SOURCE_BRANCH" != feature/* ]]; then
+              echo "Error: Only 'feature/*' branches can be merged into 'main'."
+              exit 1
+            fi
+            echo "Branch name is valid for main (Staging)."
+          fi
+          
+          # 2. القاعدة الخاصة بالـ prod (يستقبل فقط main)
+          if [[ "$TARGET_BRANCH" == "prod" ]]; then
+            if [[ "$SOURCE_BRANCH" != "main" ]]; then
+              echo "Error: Only 'main' can be merged into 'prod'."
+              exit 1
+            fi
+            echo "Branch name is valid for prod."
           fi
