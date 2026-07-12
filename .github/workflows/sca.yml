@@ -1,0 +1,21 @@
+name: Gitleaks Security Scan
+
+on: [push, pull_request]
+
+jobs:
+  gitleaks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # نستخدم fetch-depth: 0 لتمكين Gitleaks من فحص تاريخ الـ commits كاملة
+          fetch-depth: 0
+
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          # هذا التوكين يستخدمه الـ Action للوصول للـ Repository
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # اختيارياً، يمكنك إضافة خيارات إضافية هنا
+          GITLEAKS_CONFIG: "" # اتركها فارغة لاستخدام الإعدادات الافتراضية القوية
