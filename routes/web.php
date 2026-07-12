@@ -21,4 +21,4 @@ use App\Http\Controllers\GenerateController;
 
 Route::get('/generate', [GenerateController::class, 'show']);
 Route::post('/generate', [GenerateController::class, 'generate'])->name('generate');
-Route::post('/generate-many', [GenerateController::class, 'generateMany'])->name('generate.many');
+Route::post('/generate-many1', [GenerateController::class, 'generateMany'])->name('generate.many');
