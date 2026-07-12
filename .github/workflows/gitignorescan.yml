@@ -1,0 +1,28 @@
+name: Check .gitignore for .env
+
+on: [push, pull_request]
+
+jobs:
+  check-gitignore-content:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Verify .env is in .gitignore
+        run: |
+          # التأكد من وجود ملف .gitignore أصلاً
+          if [ ! -f .gitignore ]; then
+            echo "::error::ملف .gitignore غير موجود!"
+            exit 1
+          fi
+
+          # البحث عن السطر .env داخل ملف .gitignore
+          # grep -q: للبحث الصامت (بدون طباعة النتيجة)
+          # ^\.env$: يبحث عن سطر يحتوي فقط على .env
+          if grep -qE "^\.env$" .gitignore; then
+            echo "التحقق ناجح: .env موجود في .gitignore"
+          else
+            echo "::error::خطأ أمني! ملف .env غير موجود في .gitignore. يرجى إضافته فوراً."
+            exit 1
+          fi
